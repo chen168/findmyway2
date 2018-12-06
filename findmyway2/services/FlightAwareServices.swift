@@ -11,8 +11,8 @@ import Alamofire
 import SwiftyJSON
 
 class FlightAwareServices {
-    public func flightInfoStatus(flightNum: String, departure: Date, _ callback: @escaping (JSON)->Void) {
-        let url = "http://flightxml.flightaware.com/json/FlightXML3/FlightInfoStatus?ident=ASA" + flightNum + "&include_ex_data=true"
+    public func flightInfoStatus(flightNum: Int, departure: Date, _ callback: @escaping (JSON)->Void) {
+        let url = "http://flightxml.flightaware.com/json/FlightXML3/FlightInfoStatus?ident=ASA" + String(flightNum) + "&include_ex_data=true"
         Alamofire.request(url).authenticate(user: "kimate", password: "6ea9e24e929403785d2f2bd99684a76fda3aed14")
             .responseJSON { response in
                 if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {

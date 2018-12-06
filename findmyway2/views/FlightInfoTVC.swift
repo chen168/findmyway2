@@ -8,8 +8,9 @@
 
 import UIKit
 import SwiftyJSON
+import UserNotifications
 
-class FlightInfoTVC: UITableViewController {
+class FlightInfoTVC: UITableViewController, UNUserNotificationCenterDelegate {
 
     @IBOutlet weak var flightNumLabel: UILabel!
     @IBOutlet weak var departureLabel: UILabel!
@@ -26,7 +27,11 @@ class FlightInfoTVC: UITableViewController {
     
     var dateFormatter = DateFormatter()
     
+    var flightInfo: FlightInfo?
     var flightInfoStatusResultJson: JSON!
+    
+    var updateTimer: Timer?
+    var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,16 +43,103 @@ class FlightInfoTVC: UITableViewController {
 
         setFlightInfoStatus()
         
+        setBackgroundUpdate()
+        
+    
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
+    /*
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Make footerview so it fill up size of the screen
+        // The button is aligned to bottom of the footerview
+        // using autolayout constraints
+        self.tableView.tableFooterView = nil
+        self.footerView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.tableView.frame.size.height - self.tableView.contentSize.height - self.footerView.frame.size.height)
+        self.tableView.tableFooterView = self.footerView
+    }
+ */
+    
+    func createNotificationForGateChanged(flightNum: Int, oldGate: String, newGate: String) {
+        print("createNotificationForGateChanged")
+        
+        //creating the notification content
+        let content = UNMutableNotificationContent()
+        
+        //adding title, subtitle, body and badge
+        content.title = "Hey there's a gate changed for flight \(flightNum)"
+        //content.subtitle = ""
+        content.body = "From gate \(oldGate) to \(newGate)"
+        content.badge = 1
+        
+        //getting the notification trigger
+        //it will be called after 5 seconds
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        
+        //getting the notification request
+        let request = UNNotificationRequest(identifier: "SimplifiedIOSNotification", content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().delegate = self
+        
+        //adding the notification to notification center
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        
+        //displaying the ios local notification when app is in foreground
+        completionHandler([.alert, .badge, .sound])
+    }
+    
+    
+    private func setBackgroundUpdate() {
+        updateTimer = Timer.scheduledTimer(timeInterval: 20, target: self,
+                                           selector: #selector(getUpdatedFlightStatus), userInfo: nil, repeats: true)
+        
+        registerBackgroundTask()
+    }
+    
+    @objc func getUpdatedFlightStatus() {
+        print("getUpdatedFlightStatus(): \(Date())")
+        
+        getFlightInfoStatus()
+    }
+    
+    func registerBackgroundTask() {
+        backgroundTask = UIApplication.shared.beginBackgroundTask { [weak self] in
+            self?.endBackgroundTask()
+        }
+        assert(backgroundTask != .invalid)
+    }
+    
+    func endBackgroundTask() {
+        print("Background task ended.")
+        UIApplication.shared.endBackgroundTask(backgroundTask)
+        backgroundTask = .invalid
+    }
     
     private func setFlightInfoStatus() {
+        if self.flightInfo != nil {
+            self.displayDepartureInfo(flightInfo: flightInfo!)
+        
+            self.displayDestinationInfo(flightInfo: flightInfo!)
+        } else {
+            getFlightInfoStatus()
+        }
+    }
+    
+    
+    private func getFlightInfoStatus() {
+        print("getFlightInfoStatus(): calling FlightAware...")
+        
         let flightNum = UserDefaultsUtils.getFlightNum()
-        let departureDate = UserDefaultsUtils.getDepartureDate()
+        let departureDate = UserDefaultsUtils.getDepartureDate()!
         
         let service = FlightAwareServices()
         service.flightInfoStatus(flightNum: flightNum, departure: departureDate, {
@@ -55,48 +147,111 @@ class FlightInfoTVC: UITableViewController {
             //print("chen168: \(result)")
             self.flightInfoStatusResultJson = result
             
-            if let flightInfo = self.getFlightInfo(byDate: departureDate) {
-                print("found: \(flightInfo)")
+            if let flightInfoJSON = self.getFlightInfo(byDate: departureDate) {
+                // print("found: \(flightInfoJSON)")
             
-                self.displayDepartureInfo(flightInfo: flightInfo)
+                self.displayDepartureInfo(flightInfoJSON: flightInfoJSON)
             
-                self.displayDestinationInfo(flightInfo: flightInfo)
+                self.displayDestinationInfo(flightInfoJSON: flightInfoJSON)
+                
+                let flightNum = UserDefaultsUtils.getFlightNum()
+                
+                let currentDepartureGate = flightInfoJSON["gate_orig"].stringValue
+                self.checkDepartureGateChanged(flightNum: flightNum, departureDate: departureDate, currentGate: currentDepartureGate)
+                
+                self.saveFlightStatus(flightNum: flightNum, flightInfoJSON: flightInfoJSON)
             } else {
                 print("getFlightInfo() return null")
             }
         })
     }
+ 
+    private func checkDepartureGateChanged(flightNum: Int, departureDate: Date, currentGate: String) {
+        let dao = FlightStatusDAO()
+        if let oldFlightInfo = dao.read(byFlightNum: flightNum, byDepartureDate: departureDate) {
+            if (oldFlightInfo.departureGate != currentGate) {
+                self.createNotificationForGateChanged(flightNum: flightNum, oldGate: oldFlightInfo.departureGate, newGate: currentGate)
+            } else {
+                print("no gate changed")
+            }
+        }
+    }
+
 
     private func setFlightNum() {
-        flightNumLabel.text = UserDefaultsUtils.getFlightNum()
+        flightNumLabel.text = String(UserDefaultsUtils.getFlightNum())
     }
     
     private func setDepartureDate() {
         let departureDate = UserDefaultsUtils.getDepartureDate()
         
-        departureLabel.text = dateFormatter.string(from: departureDate)
+        departureLabel.text = dateFormatter.string(from: departureDate!)
+    }
+    private func displayDepartureInfo(flightInfo: FlightInfo) {
+        departureAirportLabel.text = flightInfo.departureAirport
+    
+        departureDateLabel.text = flightInfo.departureDate
+        departureTimeLabel.text = flightInfo.departureTime
+        
+        departureGateLabel.text = flightInfo.departureGate
     }
     
-    private func displayDepartureInfo(flightInfo: JSON) {
-        let origin = flightInfo["origin"]
-        departureAirportLabel.text = "why" // origin["airport_name"].stringValue
+    private func displayDestinationInfo(flightInfo: FlightInfo) {
+        arrivalAirportLabel.text = flightInfo.arrivalAirport
         
-        let actualDepartureTime = flightInfo["actual_departure_time"]
+        arrivalDateLabel.text = flightInfo.arrivalDate
+        arrivalTimeLabel.text = flightInfo.arrivalTime
+        
+        arrivalGateLabel.text = flightInfo.arrivalGate
+    }
+    
+    
+    private func displayDepartureInfo(flightInfoJSON: JSON) {
+        let origin = flightInfoJSON["origin"]
+        departureAirportLabel.text = origin["airport_name"].stringValue
+        
+        let actualDepartureTime = flightInfoJSON["actual_departure_time"]
         departureDateLabel.text = actualDepartureTime["date"].stringValue
         departureTimeLabel.text = actualDepartureTime["time"].stringValue
         
-        departureGateLabel.text = flightInfo["gate_orig"].stringValue
+        departureGateLabel.text = flightInfoJSON["gate_orig"].stringValue
     }
     
-    private func displayDestinationInfo(flightInfo: JSON) {
-        let destination = flightInfo["destination"]
+    private func displayDestinationInfo(flightInfoJSON: JSON) {
+        let destination = flightInfoJSON["destination"]
         arrivalAirportLabel.text = destination["airport_name"].stringValue
         
-        let actualArrivalTime = flightInfo["actual_arrival_time"]
+        let actualArrivalTime = flightInfoJSON["actual_arrival_time"]
         arrivalDateLabel.text = actualArrivalTime["date"].stringValue
         arrivalTimeLabel.text = actualArrivalTime["time"].stringValue
         
-        arrivalGateLabel.text = flightInfo["gate_dest"].stringValue
+        arrivalGateLabel.text = flightInfoJSON["gate_dest"].stringValue
+    }
+    
+    private func saveFlightStatus(flightNum: Int, flightInfoJSON: JSON) {
+        let origin = flightInfoJSON["origin"]
+        let actualDepartureTime = flightInfoJSON["actual_departure_time"]
+        // 12/04/2018
+        let departureDate = actualDepartureTime["date"].stringValue
+        // "01:28PM"
+        let departureTime = actualDepartureTime["time"].stringValue
+        let departureAirport = origin["airport_name"].stringValue
+        let departureGate = flightInfoJSON["gate_orig"].stringValue
+        
+        
+        let destination = flightInfoJSON["destination"]
+        let arrivalAirport = destination["airport_name"].stringValue
+        let actualArrivalTime = flightInfoJSON["actual_arrival_time"]
+        let arrivalDate = actualArrivalTime["date"].stringValue
+        let arrivalTime = actualArrivalTime["time"].stringValue
+        let arrivalGate = flightInfoJSON["gate_dest"].stringValue
+        
+        let flightInfo = FlightInfo(flightNum: flightNum, departureAirport: departureAirport, departureDate: departureDate, departureTime: departureTime, departureGate: departureGate, arrivalAirport: arrivalAirport, arrivalDate: arrivalDate, arrivalTime: arrivalTime, arrivalGate: arrivalGate)
+        
+        
+        let dao = FlightStatusDAO()
+        
+        dao.save(flightInfo: flightInfo)
     }
     
     private func getFlightInfo(byDate: Date) -> JSON? {

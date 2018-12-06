@@ -16,6 +16,15 @@ extension String {
         
         return date!
     }
+    
+    func fromISO8601asDate() -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+        
+        let date = dateFormatter.date(from: self)
+        
+        return date!
+    }
 }
 
 extension Date {
@@ -28,6 +37,23 @@ extension Date {
             return false
         }
     }
+    
+    func toISO8601() -> String {
+        let dateStringFormatter = DateFormatter()
+        dateStringFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+        dateStringFormatter.timeZone = TimeZone.current
+        
+        return dateStringFormatter.string(from: self)
+    }
+}
+
+extension Date {
+    func stripTime() -> Date {
+        let components = Calendar.current.dateComponents([.year, .month, .day], from: self)
+        let date = Calendar.current.date(from: components)
+        return date!
+    }
+    
 }
 
 struct UserDefaultsConstant {
@@ -36,16 +62,16 @@ struct UserDefaultsConstant {
 }
 
 class UserDefaultsUtils {
-    public static func saveFlightNum(flightNum: String) {
+    public static func saveFlightNum(flightNum: Int) {
         let defaults = UserDefaults.standard
         
         defaults.set(flightNum, forKey: UserDefaultsConstant.FLIGHT_NUMBER)
     }
     
-    public static func getFlightNum() -> String {
+    public static func getFlightNum() -> Int {
         let defaults = UserDefaults.standard
         
-        return defaults.string(forKey: UserDefaultsConstant.FLIGHT_NUMBER) ?? ""
+        return defaults.integer(forKey: UserDefaultsConstant.FLIGHT_NUMBER)
     }
     
     public static func saveDepartureDate(date: Date) {
@@ -54,10 +80,18 @@ class UserDefaultsUtils {
         defaults.set(date, forKey: UserDefaultsConstant.DEPARTURE_DATE)
     }
     
-    public static func getDepartureDate() -> Date {
+    public static func getDepartureDate() -> Date? {
         let defaults = UserDefaults.standard
         
-        return defaults.object(forKey: UserDefaultsConstant.DEPARTURE_DATE) as! Date
+        return defaults.object(forKey: UserDefaultsConstant.DEPARTURE_DATE) as? Date ?? nil
+    }
+    
+    public static func resetDefaults() {
+        let defaults = UserDefaults.standard
+        let dictionary = defaults.dictionaryRepresentation()
+        dictionary.keys.forEach { key in
+            defaults.removeObject(forKey: key)
+        }
     }
 }
 

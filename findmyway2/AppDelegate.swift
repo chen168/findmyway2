@@ -17,9 +17,57 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+       loadSavedFlightInfo()
+        
+      //  UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
+        
         return true
     }
-
+    
+    func loadSavedFlightInfo() {
+        
+        let dao = FlightStatusDAO()
+        let flightNum = UserDefaultsUtils.getFlightNum()
+        
+        if flightNum > 0 {
+            let departureDate = UserDefaultsUtils.getDepartureDate()!
+            
+            if let flightInfoFound = dao.read(byFlightNum: flightNum, byDepartureDate: departureDate) {
+                print("AppDelegate.loadSavedFlightInfo(): jumping to FlightInfoTVC")
+                
+                let vc = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "FlightInfoTVC") as! FlightInfoTVC
+                
+                vc.flightInfo = flightInfoFound
+                
+                let navVC = UINavigationController(rootViewController: vc)
+                let share = UIApplication.shared.delegate as? AppDelegate
+                share?.window?.rootViewController = navVC
+                share?.window?.makeKeyAndVisible()
+            } else {
+                print("AppDelegate.loadSavedFlightInfo(): flightInfoFound is not found in Core Data")
+            }
+        } else {
+            print("No saved FlightInfo")
+        }
+    }
+    
+    /*
+    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        if let tabBarController = window?.rootViewController as? UITabBarController,
+            let viewControllers = tabBarController.viewControllers
+        {
+            for viewController in viewControllers {
+                if let fetchViewController = viewController as? FlightInfoTVC {
+                    fetchViewController.fetch {
+                        fetchViewController.updateUI()
+                        completionHandler(.newData)
+                    }
+                }
+            }
+        }
+    }
+*/
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.

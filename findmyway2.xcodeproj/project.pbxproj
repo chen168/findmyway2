@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1F8D054244D0758763F12989 /* Pods_findmyway2Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F806C33B2D2B5329498F47 /* Pods_findmyway2Tests.framework */; };
 		8F9F0D8EC4497AE5694CBEB4 /* Pods_findmyway2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7142D74356EBE94062E282 /* Pods_findmyway2.framework */; };
+		980C0A0921B92A0B00BC54CD /* DevViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 980C0A0821B92A0B00BC54CD /* DevViewController.swift */; };
 		983E240A21B7291200BC386C /* FlightAwareServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983E240921B7291200BC386C /* FlightAwareServices.swift */; };
 		983E240C21B77AB200BC386C /* FlightInfoStatusVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983E240B21B77AB200BC386C /* FlightInfoStatusVC.swift */; };
 		983E240E21B7839900BC386C /* DisplayFlightInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983E240D21B7839900BC386C /* DisplayFlightInfoVC.swift */; };
@@ -23,6 +24,8 @@
 		987F1AC721B5E5890070D0EE /* findmyway2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987F1AC621B5E5890070D0EE /* findmyway2Tests.swift */; };
 		987F1AD221B5E5890070D0EE /* findmyway2UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987F1AD121B5E5890070D0EE /* findmyway2UITests.swift */; };
 		987F1AE121B5F8810070D0EE /* TicketResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987F1AE021B5F8810070D0EE /* TicketResultViewController.swift */; };
+		9892CA1621B86E1500D33E58 /* FlightStatusDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9892CA1521B86E1500D33E58 /* FlightStatusDAO.swift */; };
+		9892CA1921B8754200D33E58 /* FlightInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9892CA1821B8754200D33E58 /* FlightInfo.swift */; };
 		E6CEF49967B2FB0E605C4371 /* Pods_findmyway2UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9637D391030B0CDBA2BF93C /* Pods_findmyway2UITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +53,7 @@
 		14F4B81AC321042C5D785DF9 /* Pods-findmyway2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-findmyway2.debug.xcconfig"; path = "Pods/Target Support Files/Pods-findmyway2/Pods-findmyway2.debug.xcconfig"; sourceTree = "<group>"; };
 		36C143A020FC783E1FD2049E /* Pods-findmyway2Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-findmyway2Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-findmyway2Tests/Pods-findmyway2Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		84B71AE9FA4920D3D37DD9B3 /* Pods-findmyway2Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-findmyway2Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-findmyway2Tests/Pods-findmyway2Tests.release.xcconfig"; sourceTree = "<group>"; };
+		980C0A0821B92A0B00BC54CD /* DevViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevViewController.swift; sourceTree = "<group>"; };
 		983E240921B7291200BC386C /* FlightAwareServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightAwareServices.swift; sourceTree = "<group>"; };
 		983E240B21B77AB200BC386C /* FlightInfoStatusVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightInfoStatusVC.swift; sourceTree = "<group>"; };
 		983E240D21B7839900BC386C /* DisplayFlightInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayFlightInfoVC.swift; sourceTree = "<group>"; };
@@ -70,6 +74,8 @@
 		987F1AD121B5E5890070D0EE /* findmyway2UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = findmyway2UITests.swift; sourceTree = "<group>"; };
 		987F1AD321B5E5890070D0EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		987F1AE021B5F8810070D0EE /* TicketResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketResultViewController.swift; sourceTree = "<group>"; };
+		9892CA1521B86E1500D33E58 /* FlightStatusDAO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightStatusDAO.swift; sourceTree = "<group>"; };
+		9892CA1821B8754200D33E58 /* FlightInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightInfo.swift; sourceTree = "<group>"; };
 		CD7142D74356EBE94062E282 /* Pods_findmyway2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_findmyway2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D46B89A730E56B86F7C240BB /* Pods-findmyway2UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-findmyway2UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-findmyway2UITests/Pods-findmyway2UITests.release.xcconfig"; sourceTree = "<group>"; };
 		F9637D391030B0CDBA2BF93C /* Pods_findmyway2UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_findmyway2UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -160,6 +166,8 @@
 		987F1AAD21B5E5880070D0EE /* findmyway2 */ = {
 			isa = PBXGroup;
 			children = (
+				9892CA1721B8752300D33E58 /* model */,
+				9892CA1421B86DF900D33E58 /* dao */,
 				983E240821B728EE00BC386C /* services */,
 				987F1ADF21B5F76E0070D0EE /* views */,
 				987F1AAE21B5E5880070D0EE /* AppDelegate.swift */,
@@ -198,8 +206,25 @@
 				983E240B21B77AB200BC386C /* FlightInfoStatusVC.swift */,
 				983E240D21B7839900BC386C /* DisplayFlightInfoVC.swift */,
 				983E240F21B788DF00BC386C /* FlightInfoTVC.swift */,
+				980C0A0821B92A0B00BC54CD /* DevViewController.swift */,
 			);
 			path = views;
+			sourceTree = "<group>";
+		};
+		9892CA1421B86DF900D33E58 /* dao */ = {
+			isa = PBXGroup;
+			children = (
+				9892CA1521B86E1500D33E58 /* FlightStatusDAO.swift */,
+			);
+			path = dao;
+			sourceTree = "<group>";
+		};
+		9892CA1721B8752300D33E58 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				9892CA1821B8754200D33E58 /* FlightInfo.swift */,
+			);
+			path = model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -274,6 +299,11 @@
 				TargetAttributes = {
 					987F1AAA21B5E5880070D0EE = {
 						CreatedOnToolsVersion = 10.1;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					987F1AC121B5E5890070D0EE = {
 						CreatedOnToolsVersion = 10.1;
@@ -432,6 +462,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				980C0A0921B92A0B00BC54CD /* DevViewController.swift in Sources */,
+				9892CA1621B86E1500D33E58 /* FlightStatusDAO.swift in Sources */,
 				987F1AB121B5E5880070D0EE /* TicketViewController.swift in Sources */,
 				987F1AB721B5E5880070D0EE /* findmyway2.xcdatamodeld in Sources */,
 				983E240A21B7291200BC386C /* FlightAwareServices.swift in Sources */,
@@ -439,6 +471,7 @@
 				987F1AE121B5F8810070D0EE /* TicketResultViewController.swift in Sources */,
 				983E241021B788DF00BC386C /* FlightInfoTVC.swift in Sources */,
 				983E241221B78BAC00BC386C /* UserDefaultsUtils.swift in Sources */,
+				9892CA1921B8754200D33E58 /* FlightInfo.swift in Sources */,
 				983E240C21B77AB200BC386C /* FlightInfoStatusVC.swift in Sources */,
 				987F1AAF21B5E5880070D0EE /* AppDelegate.swift in Sources */,
 			);
